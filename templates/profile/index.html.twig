@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <main class="container">
+        <h1 class="mt-5 mb-5">Your profile</h1>
+        <a class="mt-4 mb-3 btn btn-primary" href="{{ path('app_create_api') }}">AJOUTER UNE API</a>
+        <h4>Vos APIS ajoutées : </h4>
+    </main>
+{% endblock %}

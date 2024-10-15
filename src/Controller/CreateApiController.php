@@ -15,9 +15,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class CreateApiController extends AbstractController
 {
     #[Route('/createdApi/home', name: 'app_create_api_home')]
-    public function index(){
+    public function index()
+    {
         return $this->render('create_api/index.html.twig');
     }
+
     #[Route('/create/api', name: 'app_create_api')]
     public function create(Request $request, EntityManagerInterface $manager)
     {
@@ -26,6 +28,7 @@ class CreateApiController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $createdApi->setApiKey(hash('sha256', $createdApi->getApiKey()));
+            $createdApi->setCreator($this->getUser()->getProfile());
             $manager->persist($createdApi);
             $manager->flush();
             return $this->redirectToRoute('app_create_api_home');

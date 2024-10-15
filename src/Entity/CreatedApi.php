@@ -32,6 +32,10 @@ class CreatedApi
     #[ORM\Column(length: 255)]
     private ?string $docLink = null;
 
+    #[ORM\ManyToOne(inversedBy: 'createdApis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Profile $creator = null;
+
 
     public function getId(): ?int
     {
@@ -106,6 +110,18 @@ class CreatedApi
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCreator(): ?Profile
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?Profile $creator): static
+    {
+        $this->creator = $creator;
 
         return $this;
     }

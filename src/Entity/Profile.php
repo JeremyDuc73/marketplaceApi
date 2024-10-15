@@ -25,9 +25,16 @@ class Profile
     #[ORM\OneToMany(targetEntity: PurchasedApi::class, mappedBy: 'linkToProfile')]
     private Collection $purchasedApis;
 
+    /**
+     * @var Collection<int, CreatedApi>
+     */
+    #[ORM\OneToMany(targetEntity: CreatedApi::class, mappedBy: 'creator')]
+    private Collection $createdApis;
+
     public function __construct()
     {
         $this->purchasedApis = new ArrayCollection();
+        $this->createdApis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,6 +78,36 @@ class Profile
             // set the owning side to null (unless already changed)
             if ($purchasedApi->getLinkToProfile() === $this) {
                 $purchasedApi->setLinkToProfile(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CreatedApi>
+     */
+    public function getCreatedApis(): Collection
+    {
+        return $this->createdApis;
+    }
+
+    public function addCreatedApi(CreatedApi $createdApi): static
+    {
+        if (!$this->createdApis->contains($createdApi)) {
+            $this->createdApis->add($createdApi);
+            $createdApi->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedApi(CreatedApi $createdApi): static
+    {
+        if ($this->createdApis->removeElement($createdApi)) {
+            // set the owning side to null (unless already changed)
+            if ($createdApi->getCreator() === $this) {
+                $createdApi->setCreator(null);
             }
         }
 
