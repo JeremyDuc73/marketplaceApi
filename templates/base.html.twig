@@ -17,6 +17,41 @@
     {% endblock %}
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary p-4">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a style="font-size: larger" class="nav-link active border border-light me-4" href="{{ path('app_home') }}">Marketplace API</a>
+                </li>
+                {#                <li class="nav-item"> #}
+                {#                    <a style="font-size: larger" class="nav-link" href="{{ path('app_product') }}">PRODUITS</a> #}
+                {#                </li> #}
+                {% if not app.user %}
+                    <li class="nav-item">
+                        <a style="font-size: larger" class="nav-link" href="{{ path('app_register') }}">S'INSCRIRE<i class="bi bi-box-arrow-up-right ms-2"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="font-size: larger" class="nav-link" href="{{ path('app_login') }}">SE CONNECTER <i class="bi bi-box-arrow-in-right"></i></a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <div class="d-flex">
+                            <a href="#">Profile</a>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+            {% if app.user %}
+                {#                <a style="font-size: larger" href="{{ path('app_cart') }}" class="btn btn-success me-4"><i class="bi bi-cart"></i> ({{ globalcart.count() }})</a> #}
+                <a style="font-size: larger" href="{{ path('app_logout') }}" class="btn btn-danger ">SE DECONNECTER <i class="bi bi-box-arrow-right ms-2"></i></a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
 {% block body %}{% endblock %}
 </body>
 </html>
