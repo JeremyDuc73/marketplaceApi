@@ -4,6 +4,18 @@
 
 {% block body %}
     <main class="container">
-        <p>ici produits</p>
+        <div class="row">
+            {% for api in apis %}
+                <div class="col-3 card m-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ api.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
+                        <p class="card-text">{{ api.description }}</p>
+                        <a href="#" class="card-link">Buy</a>
+                        <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="card-link">View</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </main>
 {% endblock %}
