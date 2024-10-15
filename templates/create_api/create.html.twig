@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CreateApiController!{% endblock %}
+
+{% block body %}
+    <main class="container">
+        <h1 class="mt-5">Add your API </h1>
+        {{ form_start(createApiForm) }}
+        {{ form_row(createApiForm.name) }}
+        {{ form_row(createApiForm.description) }}
+        {{ form_row(createApiForm.docLink) }}
+        {{ form_row(createApiForm.price) }}
+        {{ form_row(createApiForm.requestAmountPerSale) }}
+        {{ form_row(createApiForm.apiKey) }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+        {{ form_end(createApiForm) }}
+    </main>
+
+{% endblock %}
