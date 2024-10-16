@@ -43,4 +43,11 @@ class CartController extends AbstractController
         $cartService->removeRow($createdApi);
         return $this->redirectToRoute('app_cart');
     }
+
+    #[Route('/cart/empty', name: 'app_cart_empty')]
+    public function emptyCart(CartService $cartService): Response
+    {
+        $cartService->emptyCart();
+        return $this->redirectToRoute('app_cart');
+    }
 }
