@@ -6,11 +6,17 @@
     <main class="container">
         <h1 class="mt-5">Add your API </h1>
         {{ form_start(createApiForm) }}
-        {{ form_row(createApiForm.name) }}
+        <div class="row">
+            <div class="col-6">
+                {{ form_row(createApiForm.name) }}
+                {{ form_row(createApiForm.docLink) }}
+            </div>
+            <div class="col-6">
+                {{ form_row(createApiForm.requestAmountPerSale) }}
+                {{ form_row(createApiForm.price) }}
+            </div>
+        </div>
         {{ form_row(createApiForm.description) }}
-        {{ form_row(createApiForm.docLink) }}
-        {{ form_row(createApiForm.price) }}
-        {{ form_row(createApiForm.requestAmountPerSale) }}
         {{ form_row(createApiForm.apiKey) }}
         {{ form_end(createApiForm) }}
         <button type="submit" class="btn btn-primary">Submit</button>
