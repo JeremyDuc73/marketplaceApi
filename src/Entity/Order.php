@@ -2,30 +2,31 @@
 
 namespace App\Entity;
 
-use App\Repository\PurchasedApiRepository;
+use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PurchasedApiRepository::class)]
-class PurchasedApi
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: '`order`')]
+class Order
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'purchasedApis')]
+    #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Profile $linkToProfile = null;
+    private ?Profile $ofProfile = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $ApiName = null;
+    #[ORM\Column]
+    private ?float $total = null;
 
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'purchasedApi')]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'ofOrder', orphanRemoval: true)]
     private Collection $orderItems;
 
     public function __construct()
@@ -38,26 +39,26 @@ class PurchasedApi
         return $this->id;
     }
 
-    public function getLinkToProfile(): ?Profile
+    public function getOfProfile(): ?Profile
     {
-        return $this->linkToProfile;
+        return $this->ofProfile;
     }
 
-    public function setLinkToProfile(?Profile $linkToProfile): static
+    public function setOfProfile(?Profile $ofProfile): static
     {
-        $this->linkToProfile = $linkToProfile;
+        $this->ofProfile = $ofProfile;
 
         return $this;
     }
 
-    public function getApiName(): ?string
+    public function getTotal(): ?float
     {
-        return $this->ApiName;
+        return $this->total;
     }
 
-    public function setApiName(string $ApiName): static
+    public function setTotal(float $total): static
     {
-        $this->ApiName = $ApiName;
+        $this->total = $total;
 
         return $this;
     }
@@ -74,7 +75,7 @@ class PurchasedApi
     {
         if (!$this->orderItems->contains($orderItem)) {
             $this->orderItems->add($orderItem);
-            $orderItem->setPurchasedApi($this);
+            $orderItem->setOfOrder($this);
         }
 
         return $this;
@@ -84,8 +85,8 @@ class PurchasedApi
     {
         if ($this->orderItems->removeElement($orderItem)) {
             // set the owning side to null (unless already changed)
-            if ($orderItem->getPurchasedApi() === $this) {
-                $orderItem->setPurchasedApi(null);
+            if ($orderItem->getOfOrder() === $this) {
+                $orderItem->setOfOrder(null);
             }
         }
 

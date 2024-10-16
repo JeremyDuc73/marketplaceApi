@@ -17,7 +17,9 @@ class CreateApiType extends AbstractType
             ->add('description')
             ->add('price')
             ->add('requestAmountPerSale')
-            ->add('docLink');
+            ->add('apiKey')
+            ->add('docLink')
+            ->add('linkToApi');
         if (!$options['editKey']) {
             $builder->add('apiKey', TextType::class, [
                 'label' => 'API Key',

@@ -4,6 +4,7 @@
 
 {% block body %}
     <main class="container">
+        <a href="{{ path('app_create_api') }}" class="m-3 btn btn-primary">Ajouter une api</a>
         <div class="row">
             {% for api in apis %}
                 <div class="col-3 card m-3" style="width: 18rem;">
@@ -11,7 +12,7 @@
                         <h5 class="card-title">{{ api.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
                         <p class="card-text">{{ api.description }}</p>
-                        <a href="#" class="card-link">Buy</a>
+                        <a href="{{ path('app_cart_add', {id:api.id, quantity:1}) }}" class="card-link">Add one to cart</a>
                         <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="card-link">View</a>
                     </div>
                 </div>

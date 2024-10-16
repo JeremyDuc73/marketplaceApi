@@ -31,10 +31,17 @@ class Profile
     #[ORM\OneToMany(targetEntity: CreatedApi::class, mappedBy: 'creator')]
     private Collection $createdApis;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'ofProfile', orphanRemoval: true)]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->purchasedApis = new ArrayCollection();
         $this->createdApis = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,6 +115,36 @@ class Profile
             // set the owning side to null (unless already changed)
             if ($createdApi->getCreator() === $this) {
                 $createdApi->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setOfProfile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getOfProfile() === $this) {
+                $order->setOfProfile(null);
             }
         }
 
