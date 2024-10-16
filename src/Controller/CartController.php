@@ -13,8 +13,10 @@ class CartController extends AbstractController
     #[Route('/cart', name: 'app_cart')]
     public function index(CartService $cartService): Response
     {
+        $secret = $_ENV['STRIPE_PUBLISHABLE_KEY'];
         return $this->render('cart/index.html.twig', [
             'cart' => $cartService->getCart(),
+            "STRIPE_PUBLIC_KEY"=>$secret
         ]);
     }
 

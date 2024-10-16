@@ -25,3 +25,7 @@ services:
   App\Service\EncryptorService:
     arguments:
       $secretKey: '%env(APP_SECRET)%'
+
+  App\Service\PaymentService:
+    arguments:
+      $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
