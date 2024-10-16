@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello OrderController!{% endblock %}
+
+{% block body %}
+    <h1>paye {{ total }} €</h1>
+
+    <a href="{{ path("app_order_make") }}" class="btn btn-success">oui maitre</a>
+{% endblock %}

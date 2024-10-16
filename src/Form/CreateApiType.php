@@ -18,6 +18,7 @@ class CreateApiType extends AbstractType
             ->add('requestAmountPerSale')
             ->add('apiKey')
             ->add('docLink')
+            ->add('linkToApi')
         ;
     }
 
