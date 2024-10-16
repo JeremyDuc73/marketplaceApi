@@ -1,6 +1,6 @@
 <?php
 
-namespace App\services;
+namespace App\Service;
 
 use App\Entity\CreatedApi;
 use App\Repository\CreatedApiRepository;
