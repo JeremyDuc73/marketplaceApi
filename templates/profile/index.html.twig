@@ -6,6 +6,28 @@
     <main class="container">
         <h1 class="mt-5 mb-5">Your profile</h1>
         <a class="mt-4 mb-3 btn btn-primary" href="{{ path('app_create_api') }}">AJOUTER UNE API</a>
-        <h4>Vos APIS ajoutées : </h4>
+        <div class="mt-2 mb-5">
+            <h4>Added APIS : </h4>
+            {% if createdApis is not empty %}
+                {% for createdApi in createdApis %}
+                    <div class="card mt-2 mb-2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ createdApi.name }}</h5>
+                            <a href="{{ createdApi.docLink }}" class="card-link">documentation</a>
+                            <p class="card-text">{{ createdApi.description }}</p>
+                            <p>{{ createdApi.apiKey }}</p>
+                            <a href="{{ path('app_edit_api', {id:createdApi.id}) }}" class="btn btn-warning">EDIT</a>
+                            <a href="#" class="btn btn-danger">DELETE</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Vous n'avez pas encore ajouté d'api pour le moment</p>
+            {% endif %}
+        </div>
+        <div class="pt-5">
+            <h4>Purchased APIS :</h4>
+
+        </div>
     </main>
 {% endblock %}

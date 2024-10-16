@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CreatedApi;
 use App\Form\CreateApiType;
+use App\Service\EncryptorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Form;
@@ -14,31 +15,47 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CreateApiController extends AbstractController
 {
-    #[Route('/createdApi/home', name: 'app_create_api_home')]
-    public function index()
+    private $encryptor;
+
+    public function __construct(EncryptorService $encryptor)
     {
-        return $this->render('create_api/index.html.twig');
+        $this->encryptor = $encryptor;
     }
 
     #[Route('/create/api', name: 'app_create_api')]
-    public function create(Request $request, EntityManagerInterface $manager)
+    #[Route('/edit/{id}/api', name: 'app_edit_api')]
+    public function create(Request $request, EntityManagerInterface $manager, CreatedApi $createdApi = null): Response
     {
-        $createdApi = new CreatedApi();
-        $form = $this->createForm(CreateApiType::class, $createdApi);
+        $edit = false;
+        if ($createdApi) {
+            $edit = true;
+        }
+        if (!$edit) {
+            $createdApi = new CreatedApi();
+        }
+        $form = $this->createForm(CreateApiType::class, $createdApi, [
+            'editKey' => $edit
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $createdApi->setApiKey(hash('sha256', $createdApi->getApiKey()));
+            if (!$edit) {
+                $createdApi->setApiKey($this->encryptor->encrypt($createdApi->getApiKey()));
+            }
             $createdApi->setCreator($this->getUser()->getProfile());
             $manager->persist($createdApi);
             $manager->flush();
-            return $this->redirectToRoute('app_create_api_home');
+            return $this->redirectToRoute('app_profile');
         }
-        return $this->render('create_api/create.html.twig', ["createApiForm" => $form->createView()]);
+        return $this->render('create_api/create.html.twig', [
+            "createApiForm" => $form->createView(),
+            "edit" => $edit
+        ]);
     }
 
 
     #[Route('/createdApi/show/{id}', name: 'app_create_api_show')]
-    public function show(CreatedApi $createdApi){
+    public function show(CreatedApi $createdApi)
+    {
         return $this->render('create_api/show.html.twig', [
             'createdApi' => $createdApi,
         ]);

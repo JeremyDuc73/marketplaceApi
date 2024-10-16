@@ -4,15 +4,30 @@
 
 {% block body %}
     <main class="container">
-        <h1 class="mt-5">Add your API </h1>
+        <h1 class="mt-5">
+            {% if edit %}
+                Edit your API
+            {% else %}
+                Add your API
+            {% endif %}
+        </h1>
+
         {{ form_start(createApiForm) }}
         {{ form_row(createApiForm.name) }}
         {{ form_row(createApiForm.description) }}
         {{ form_row(createApiForm.docLink) }}
         {{ form_row(createApiForm.price) }}
         {{ form_row(createApiForm.requestAmountPerSale) }}
-        {{ form_row(createApiForm.apiKey) }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        {% if not edit %}
+            {{ form_row(createApiForm.apiKey) }}
+        {% endif %}
+        <button type="submit" class="btn btn-primary">
+            {% if edit %}
+                Update
+            {% else %}
+                Create
+            {% endif %}
+        </button>
         {{ form_end(createApiForm) }}
     </main>
 
