@@ -24,14 +24,15 @@ class Order
     private ?float $total = null;
 
     /**
-     * @var Collection<int, OrderItem>
+     * @var Collection<int, CreatedApi>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'ofOrder', orphanRemoval: true)]
-    private Collection $orderItems;
+    #[ORM\ManyToMany(targetEntity: CreatedApi::class, inversedBy: 'orders')]
+    private Collection $apis;
+
 
     public function __construct()
     {
-        $this->orderItems = new ArrayCollection();
+        $this->apis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,31 +65,25 @@ class Order
     }
 
     /**
-     * @return Collection<int, OrderItem>
+     * @return Collection<int, CreatedApi>
      */
-    public function getOrderItems(): Collection
+    public function getApis(): Collection
     {
-        return $this->orderItems;
+        return $this->apis;
     }
 
-    public function addOrderItem(OrderItem $orderItem): static
+    public function addApi(CreatedApi $api): static
     {
-        if (!$this->orderItems->contains($orderItem)) {
-            $this->orderItems->add($orderItem);
-            $orderItem->setOfOrder($this);
+        if (!$this->apis->contains($api)) {
+            $this->apis->add($api);
         }
 
         return $this;
     }
 
-    public function removeOrderItem(OrderItem $orderItem): static
+    public function removeApi(CreatedApi $api): static
     {
-        if ($this->orderItems->removeElement($orderItem)) {
-            // set the owning side to null (unless already changed)
-            if ($orderItem->getOfOrder() === $this) {
-                $orderItem->setOfOrder(null);
-            }
-        }
+        $this->apis->removeElement($api);
 
         return $this;
     }

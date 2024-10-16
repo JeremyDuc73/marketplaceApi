@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PurchasedApiRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PurchasedApiRepository::class)]
@@ -19,19 +20,13 @@ class PurchasedApi
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $linkToProfile = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $ApiName = null;
+    #[ORM\ManyToOne(inversedBy: 'purchasedApis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?CreatedApi $linkApi = null;
 
-    /**
-     * @var Collection<int, OrderItem>
-     */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'purchasedApi')]
-    private Collection $orderItems;
+    #[ORM\Column]
+    private ?bool $isApiKeyGenerated = false;
 
-    public function __construct()
-    {
-        $this->orderItems = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -50,44 +45,26 @@ class PurchasedApi
         return $this;
     }
 
-    public function getApiName(): ?string
+    public function getLinkApi(): ?CreatedApi
     {
-        return $this->ApiName;
+        return $this->linkApi;
     }
 
-    public function setApiName(string $ApiName): static
+    public function setLinkApi(?CreatedApi $linkApi): static
     {
-        $this->ApiName = $ApiName;
+        $this->linkApi = $linkApi;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, OrderItem>
-     */
-    public function getOrderItems(): Collection
+    public function isApiKeyGenerated(): ?bool
     {
-        return $this->orderItems;
+        return $this->isApiKeyGenerated;
     }
 
-    public function addOrderItem(OrderItem $orderItem): static
+    public function setApiKeyGenerated(bool $isApiKeyGenerated): static
     {
-        if (!$this->orderItems->contains($orderItem)) {
-            $this->orderItems->add($orderItem);
-            $orderItem->setPurchasedApi($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrderItem(OrderItem $orderItem): static
-    {
-        if ($this->orderItems->removeElement($orderItem)) {
-            // set the owning side to null (unless already changed)
-            if ($orderItem->getPurchasedApi() === $this) {
-                $orderItem->setPurchasedApi(null);
-            }
-        }
+        $this->isApiKeyGenerated = $isApiKeyGenerated;
 
         return $this;
     }

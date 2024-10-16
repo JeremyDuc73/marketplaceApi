@@ -28,9 +28,12 @@ class ProfileController extends AbstractController
             $api->setApiKey($decryptedApiKey);
         }
 
+        $purchasedApis = $user->getProfile()->getPurchasedApis();
+
 
         return $this->render('profile/index.html.twig', [
             'createdApis' => $createdApis,
+            'purchasedApis' => $purchasedApis,
         ]);
     }
 }

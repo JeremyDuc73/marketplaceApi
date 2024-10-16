@@ -12,7 +12,18 @@
                         <h5 class="card-title">{{ api.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
                         <p class="card-text">{{ api.description }}</p>
-                        <a href="{{ path('app_cart_add', {id:api.id, quantity:1}) }}" class="card-link">Add one to cart</a>
+                        {% if app.user %}
+                            {% if app.user.profile.purchasedApis is not empty %}
+                                {% for purchasedApi in app.user.profile.purchasedApis %}
+                                    {% if purchasedApi.linkApi == api %}
+                                    {% else %}
+                                        <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                            {% endif %}
+                        {% endif %}
                         <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="card-link">View</a>
                     </div>
                 </div>

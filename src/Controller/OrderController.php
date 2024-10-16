@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Entity\OrderItem;
+use App\Entity\PurchasedApi;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
@@ -30,7 +30,8 @@ class OrderController extends AbstractController
     {
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
-        $total = $cartService->getTotal()*100;
+        $total = $cartService->getTotal() * 100;
+
 
         $product = Product::create([
             'name' => 'product',
@@ -56,14 +57,9 @@ class OrderController extends AbstractController
         return $this->json(['url' => $session->url]);
     }
 
-    #[Route('/placeOrder', name: 'app_order_place_order')]
-    public function pay(CartService $cartService): Response
-    {
-        return $this->redirectToRoute("app_order_create_payment_link", []);
-    }
-
     #[Route('/make/order', name: 'app_order_make')]
-    public function makeOrder(CartService $cartService, EntityManagerInterface $manager): Response{
+    public function makeOrder(CartService $cartService, EntityManagerInterface $manager): Response
+    {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
@@ -71,16 +67,14 @@ class OrderController extends AbstractController
         $order->setOfProfile($this->getUser()->getProfile());
         $order->setTotal($cartService->getTotal());
         $manager->persist($order);
-        foreach ($cartService->getCart() as $cartItem){
-            $orderItem = new OrderItem();
-            $orderItem->addCreatedApi($cartItem['createdApi']);
-            $orderItem->setQuantity($cartItem['quantity']);
-            $orderItem->setOfOrder($order);
-            $manager->persist($orderItem);
+        foreach ($cartService->getCart() as $cartItem) {
+            $purchasedApi = new PurchasedApi();
+            $purchasedApi->setLinkToProfile($this->getUser()->getProfile());
+            $purchasedApi->setLinkApi($cartItem['createdApi']);
+            $manager->persist($purchasedApi);
         }
         $manager->flush();
         $cartService->emptyCart();
-        $this->addFlash('success', 'order confirmed');
         return $this->redirectToRoute('app_home');
     }
 }

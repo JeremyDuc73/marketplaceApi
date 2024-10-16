@@ -21,7 +21,7 @@ class CreatedApi
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
-    
+
     #[ORM\Column]
     private ?float $price = null;
 
@@ -38,18 +38,25 @@ class CreatedApi
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $creator = null;
 
-    /**
-     * @var Collection<int, OrderItem>
-     */
-    #[ORM\ManyToMany(targetEntity: OrderItem::class, mappedBy: 'CreatedApi')]
-    private Collection $orderItems;
-
     #[ORM\Column(length: 255)]
     private ?string $linkToApi = null;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'apis')]
+    private Collection $orders;
+
+    /**
+     * @var Collection<int, PurchasedApi>
+     */
+    #[ORM\OneToMany(targetEntity: PurchasedApi::class, mappedBy: 'linkApi')]
+    private Collection $purchasedApis;
+
     public function __construct()
     {
-        $this->orderItems = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->purchasedApis = new ArrayCollection();
     }
 
 
@@ -142,33 +149,6 @@ class CreatedApi
         return $this;
     }
 
-    /**
-     * @return Collection<int, OrderItem>
-     */
-    public function getOrderItems(): Collection
-    {
-        return $this->orderItems;
-    }
-
-    public function addOrderItem(OrderItem $orderItem): static
-    {
-        if (!$this->orderItems->contains($orderItem)) {
-            $this->orderItems->add($orderItem);
-            $orderItem->addCreatedApi($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrderItem(OrderItem $orderItem): static
-    {
-        if ($this->orderItems->removeElement($orderItem)) {
-            $orderItem->removeCreatedApi($this);
-        }
-
-        return $this;
-    }
-
     public function getLinkToApi(): ?string
     {
         return $this->linkToApi;
@@ -177,6 +157,63 @@ class CreatedApi
     public function setLinkToApi(string $linkToApi): static
     {
         $this->linkToApi = $linkToApi;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->addApi($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            $order->removeApi($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PurchasedApi>
+     */
+    public function getPurchasedApis(): Collection
+    {
+        return $this->purchasedApis;
+    }
+
+    public function addPurchasedApi(PurchasedApi $purchasedApi): static
+    {
+        if (!$this->purchasedApis->contains($purchasedApi)) {
+            $this->purchasedApis->add($purchasedApi);
+            $purchasedApi->setLinkApi($this);
+        }
+
+        return $this;
+    }
+
+    public function removePurchasedApi(PurchasedApi $purchasedApi): static
+    {
+        if ($this->purchasedApis->removeElement($purchasedApi)) {
+            // set the owning side to null (unless already changed)
+            if ($purchasedApi->getLinkApi() === $this) {
+                $purchasedApi->setLinkApi(null);
+            }
+        }
 
         return $this;
     }

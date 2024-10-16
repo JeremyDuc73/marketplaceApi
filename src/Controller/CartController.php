@@ -8,9 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/cart')]
 class CartController extends AbstractController
 {
-    #[Route('/cart', name: 'app_cart')]
+    #[Route('/', name: 'app_cart')]
     public function index(CartService $cartService): Response
     {
         $secret = $_ENV['STRIPE_PUBLISHABLE_KEY'];
@@ -20,33 +21,21 @@ class CartController extends AbstractController
         ]);
     }
 
-    #[Route('/addtocart/{id}/{quantity}', name: 'app_cart_add')]
-    public function addToCart(CreatedApi $createdApi, $quantity, CartService $cartService): Response
+    #[Route('/add/{id}', name: 'app_cart_add')]
+    public function addToCart(CreatedApi $createdApi, CartService $cartService): Response
     {
-        $cartService->addApi($createdApi, $quantity);
+        $cartService->addApi($createdApi);
         return $this->redirectToRoute('app_home');
     }
 
-    #[Route('/removeOneFromCart/{id}', name: 'app_cart_remove_one_from_cart')]
-    public function removeOne(CreatedApi $createdApi, CartService $cartService): Response
+    #[Route('/remove/{id}', name: 'app_cart_remove_row')]
+    public function removeRow(CartService $cartService, CreatedApi $createdApi): Response
     {
-        $cartService->removeCreatedApi($createdApi, 1);
-        return $this->redirectToRoute('app_cart');
-    }
-    #[Route('/addonetocart/{id}', name: 'app_cart_add_one_to_cart')]
-    public function addOne(CreatedApi $createdApi, CartService $cartService): Response
-    {
-        $cartService->addApi($createdApi, 1);
-        return $this->redirectToRoute('app_cart');
-    }
-
-    #[Route('/removerow/{id}', name: 'app_cart_remove_row')]
-    public function removeRow(CartService $cartService, CreatedApi $createdApi): Response{
         $cartService->removeRow($createdApi);
         return $this->redirectToRoute('app_cart');
     }
 
-    #[Route('/cart/empty', name: 'app_cart_empty')]
+    #[Route('/empty', name: 'app_cart_empty')]
     public function emptyCart(CartService $cartService): Response
     {
         $cartService->emptyCart();

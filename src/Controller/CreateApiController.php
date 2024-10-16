@@ -53,7 +53,7 @@ class CreateApiController extends AbstractController
     }
 
 
-    #[Route('/createdApi/show/{id}', name: 'app_create_api_show')]
+    #[Route('/show/{id}', name: 'app_create_api_show')]
     public function show(CreatedApi $createdApi)
     {
         return $this->render('create_api/show.html.twig', [
