@@ -15,13 +15,16 @@
                             <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
                             <p class="card-text">{{ api.description }}</p>
                             {% if app.user %}
+                                {% set apiPurchased = false %}
                                 {% if app.user.profile.purchasedApis is not empty %}
                                     {% for purchasedApi in app.user.profile.purchasedApis %}
-                                        {% if purchasedApi.linkApi == api %}
-                                        {% else %}
-                                            <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                                        {% if purchasedApi.linkApi is same as api %}
+                                            {% set apiPurchased = true %}
                                         {% endif %}
                                     {% endfor %}
+                                    {% if not apiPurchased %}
+                                        <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                                    {% endif %}
                                 {% else %}
                                     <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
                                 {% endif %}
