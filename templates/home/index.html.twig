@@ -1,32 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Marketplace{% endblock %}
 
 {% block body %}
     <main class="container">
         <div class="row">
-            {% for api in apis %}
-                <div class="col-3 card m-3" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ api.name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
-                        <p class="card-text">{{ api.description }}</p>
-                        {% if app.user %}
-                            {% if app.user.profile.purchasedApis is not empty %}
-                                {% for purchasedApi in app.user.profile.purchasedApis %}
-                                    {% if purchasedApi.linkApi == api %}
-                                    {% else %}
-                                        <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+            {% if apis is empty %}
+                <h2 class="mt-5">There are no API available in the marketplace yet</h2>
+            {% else %}
+                {% for api in apis %}
+                    <div class="col-3 card m-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ api.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ api.price }}</h6>
+                            <p class="card-text">{{ api.description }}</p>
+                            {% if app.user %}
+                                {% if app.user.profile.purchasedApis is not empty %}
+                                    {% for purchasedApi in app.user.profile.purchasedApis %}
+                                        {% if purchasedApi.linkApi == api %}
+                                        {% else %}
+                                            <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <a href="{{ path('app_cart_add', {id:api.id}) }}" class="card-link">Add one to cart</a>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                        <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="card-link">View</a>
+                            <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="card-link">View</a>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
         </div>
     </main>
 {% endblock %}

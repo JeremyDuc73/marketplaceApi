@@ -15,13 +15,17 @@
                                 <h5 class="card-title mb-0">{{ purchasedApi.linkApi.name }}</h5>
                                 <p class="mb-0">Requests remaining : {{ purchasedApi.remainingRequests }}</p>
                             </div>
-                            {% if not purchasedApi.isApiKeyGenerated %}
-                                <a class="btn btn-success" href="{{ path('app_purchased_api_generate_api_key', {id:purchasedApi.id}) }}">GENERATE API KEY</a>
+                            {% if purchasedApi.remainingRequests == 0 %}
+                                <a class="btn btn-primary" href="{{ path('app_profile_remove_purchased_api', {id:purchasedApi.id}) }}">BUY REQUESTS OR DELETE THIS API FROM YOUR PROFILE</a>
                             {% else %}
-                                <div>
-                                    <a class="btn btn-success" href="{{ path('app_purchased_api_generate_new_api_key', {id:purchasedApi.id}) }}">GENERATE A NEW API KEY</a>
-                                    <a class="btn btn-danger" href="{{ path('app_purchased_api_delete_api_key', {id:purchasedApi.id}) }}">DELETE API KEY</a>
-                                </div>
+                                {% if not purchasedApi.isApiKeyGenerated %}
+                                    <a class="btn btn-success" href="{{ path('app_purchased_api_generate_api_key', {id:purchasedApi.id}) }}">GENERATE API KEY</a>
+                                {% else %}
+                                    <div>
+                                        <a class="btn btn-success" href="{{ path('app_purchased_api_generate_new_api_key', {id:purchasedApi.id}) }}">GENERATE A NEW API KEY</a>
+                                        <a class="btn btn-danger" href="{{ path('app_purchased_api_delete_api_key', {id:purchasedApi.id}) }}">DELETE API KEY</a>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -41,7 +45,10 @@
                             <a href="{{ createdApi.docLink }}" class="card-link">documentation</a>
                             <p class="card-text">{{ createdApi.description }}</p>
                             <a href="{{ path('app_edit_api', {id:createdApi.id}) }}" class="btn btn-warning">EDIT</a>
-                            <a href="#" class="btn btn-danger">DELETE</a>
+                            {% if app.request.get('isDeleted') == 0 and app.request.get('isDeleted') is not null %}
+                                <p>You can't delete this</p>
+                            {% endif %}
+                            <a href="{{ path('app_delete_api', {id:createdApi.id}) }}" class="btn btn-danger">DELETE</a>
                         </div>
                     </div>
                 {% endfor %}

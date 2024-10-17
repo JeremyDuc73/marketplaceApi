@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\CreatedApi;
+use App\Entity\PurchasedApi;
 use App\Form\CreateApiType;
+use App\Repository\PurchasedApiRepository;
 use App\Service\EncryptorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +28,9 @@ class CreateApiController extends AbstractController
     #[Route('/edit/{id}/api', name: 'app_edit_api')]
     public function create(Request $request, EntityManagerInterface $manager, CreatedApi $createdApi = null): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         $edit = false;
         if ($createdApi) {
             $edit = true;
@@ -52,11 +57,31 @@ class CreateApiController extends AbstractController
         ]);
     }
 
+    #[Route('/delete/{id}/api', name: 'app_delete_api')]
+    public function delete(CreatedApi $createdApi, EntityManagerInterface $manager): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $isDeleted = false;
+
+        if ($createdApi->getPurchasedApis()->count() == 0) {
+            $manager->remove($createdApi);
+            $manager->flush();
+            $isDeleted = true;
+        }
+
+
+        return $this->redirectToRoute('app_profile', ['isDeleted' => $isDeleted]);
+    }
 
 
     #[Route('/show/{id}', name: 'app_create_api_show')]
     public function show(CreatedApi $createdApi)
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         return $this->render('create_api/show.html.twig', [
             'createdApi' => $createdApi,
         ]);

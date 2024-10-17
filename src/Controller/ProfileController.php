@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PurchasedApi;
 use App\Service\EncryptorService;
 use App\Service\RemainingRequestsService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,10 @@ class ProfileController extends AbstractController
     #[Route('/profile', name: 'app_profile')]
     public function index(RemainingRequestsService $service, EntityManagerInterface $manager): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $this->getUser();
 
         $createdApis = $user->getProfile()->getCreatedApis();
@@ -40,5 +45,19 @@ class ProfileController extends AbstractController
             'createdApis' => $createdApis,
             'purchasedApis' => $purchasedApis,
         ]);
+    }
+
+    #[Route('/profile/remove/{id}/purchased-api', name: 'app_profile_remove_purchased_api')]
+    public function removePurchasedApi(PurchasedApi $purchasedApi, EntityManagerInterface $manager): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $linkApiId = $purchasedApi->getLinkApi()->getId();
+        $this->getUser()->getProfile()->removePurchasedApi($purchasedApi);
+        $manager->remove($purchasedApi);
+        $manager->flush();
+
+        return $this->redirectToRoute('app_create_api_show', ['id' => $linkApiId]);
     }
 }

@@ -25,6 +25,9 @@ class PurchasedApiController extends AbstractController
     #[Route('/purchased/api/{id}/generate-new-api-key', name: 'app_purchased_api_generate_new_api_key')]
     public function generateNewApiKey(PurchasedApi $purchasedApi)
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         $this->deleteApiKey($purchasedApi);
         $this->generateApiKey($purchasedApi);
         return $this->redirectToRoute("app_profile");
@@ -33,6 +36,9 @@ class PurchasedApiController extends AbstractController
     #[Route('/purchased/api/{id}/delete-api-key', name: 'app_purchased_api_delete_api_key')]
     public function deleteApiKey(PurchasedApi $purchasedApi): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         $route = $purchasedApi->getLinkApi()->getLinkToApiUserDelete();
 
         $route = $route . "/" . $purchasedApi->getLinkToProfile()->getOfUser()->getUuid();
@@ -55,6 +61,9 @@ class PurchasedApiController extends AbstractController
     #[Route('/purchased/api/{id}/generate-api-key', name: 'app_purchased_api_generate_api_key')]
     public function generateApiKey(PurchasedApi $purchasedApi): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         $apiKey = bin2hex(random_bytes(16));
 
         if ($this->getUser()->getEmail()) {
@@ -76,7 +85,7 @@ class PurchasedApiController extends AbstractController
                     'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
                 ],
                 'body' => [
-                    'client_id'=>$this->getUser()->getId(),
+                    'client_id' => $this->getUser()->getId(),
                     'email' => $this->getUser()->getEmail(),
                     'api_key' => $apiKey,
                     'uuid' => $this->getUser()->getUuid(),
