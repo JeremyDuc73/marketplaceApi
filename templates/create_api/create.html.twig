@@ -18,7 +18,9 @@
         {{ form_row(createApiForm.docLink) }}
         {{ form_row(createApiForm.price) }}
         {{ form_row(createApiForm.requestAmountPerSale) }}
-        {{ form_row(createApiForm.linkToApi) }}
+        {{ form_row(createApiForm.linkToApiUser) }}
+        {{ form_row(createApiForm.linkToApiUserDelete) }}
+        {{ form_row(createApiForm.linkToApiRequest) }}
         {% if not edit %}
             {{ form_row(createApiForm.apiKey) }}
         {% endif %}

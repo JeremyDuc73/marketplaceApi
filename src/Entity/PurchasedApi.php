@@ -27,6 +27,9 @@ class PurchasedApi
     #[ORM\Column]
     private ?bool $isApiKeyGenerated = false;
 
+    #[ORM\Column]
+    private ?int $remainingRequests = null;
+
 
     public function getId(): ?int
     {
@@ -65,6 +68,18 @@ class PurchasedApi
     public function setApiKeyGenerated(bool $isApiKeyGenerated): static
     {
         $this->isApiKeyGenerated = $isApiKeyGenerated;
+
+        return $this;
+    }
+
+    public function getRemainingRequests(): ?int
+    {
+        return $this->remainingRequests;
+    }
+
+    public function setRemainingRequests(int $remainingRequests): static
+    {
+        $this->remainingRequests = $remainingRequests;
 
         return $this;
     }

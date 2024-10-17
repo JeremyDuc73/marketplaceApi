@@ -3,14 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\PurchasedApi;
+use App\Service\EncryptorService;
 use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PurchasedApiController extends AbstractController
 {
+    public function __construct(private HttpClientInterface $client, private EncryptorService $encryptorService)
+    {
+    }
+
     #[Route('/purchased/api/{id}/generate-api-key', name: 'app_purchased_api_generate_api_key')]
     public function generateApiKey(PurchasedApi $purchasedApi, EntityManagerInterface $manager, MailService $service): Response
     {
@@ -27,7 +33,25 @@ class PurchasedApiController extends AbstractController
 
         $apiKey = hash('sha256', $apiKey);
 
-        //ENVOYER PAR REQUETE A L'API
+        // A TESTER
+
+        $clientUrl = $purchasedApi->getLinkApi()->getLinkToApiUser();
+        $this->client->request(
+            'POST',
+            $clientUrl, [
+                'headers' => [
+                    'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
+                ],
+                'body' => [
+                    'mail' => $this->getUser()->getEmail(),
+                    'apiKey' => $apiKey,
+                    'uuid' => $this->getUser()->getUuid(),
+                    'requests' => $purchasedApi->getRemainingRequests()
+                ]
+            ]
+        );
+
+        // A TESTER
 
         $purchasedApi->setApiKeyGenerated(true);
         $manager->flush();
@@ -38,12 +62,23 @@ class PurchasedApiController extends AbstractController
     #[Route('/purchased/api/{id}/delete-api-key', name: 'app_purchased_api_delete_api_key')]
     public function deleteApiKey(PurchasedApi $purchasedApi, EntityManagerInterface $manager): Response
     {
+        $route = $purchasedApi->getLinkApi()->getLinkToApiUserDelete();
 
-        //ENLEVER LA CLE SUR L'API
+        $route = $route . "/" . $purchasedApi->getLinkToProfile()->getOfUser()->getUuid();
+
+        $this->client->request(
+            'DELETE',
+            $route, [
+                'headers' => [
+                    'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
+                ],
+            ]
+        );
 
         $purchasedApi->setApiKeyGenerated(false);
         $manager->flush();
 
         return $this->redirectToRoute('app_profile');
     }
+
 }

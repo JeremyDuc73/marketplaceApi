@@ -23,7 +23,7 @@ class CreatedApi
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?float $price = null;
+    private ?int $price = null;
 
     #[ORM\Column]
     private ?int $requestAmountPerSale = null;
@@ -39,7 +39,7 @@ class CreatedApi
     private ?Profile $creator = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $linkToApi = null;
+    private ?string $linkToApiUser = null;
 
     /**
      * @var Collection<int, Order>
@@ -52,6 +52,12 @@ class CreatedApi
      */
     #[ORM\OneToMany(targetEntity: PurchasedApi::class, mappedBy: 'linkApi')]
     private Collection $purchasedApis;
+
+    #[ORM\Column(length: 255)]
+    private ?string $linkToApiRequest = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $linkToApiUserDelete = null;
 
     public function __construct()
     {
@@ -77,12 +83,12 @@ class CreatedApi
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    public function setPrice(int $price): static
     {
         $this->price = $price;
 
@@ -149,14 +155,14 @@ class CreatedApi
         return $this;
     }
 
-    public function getLinkToApi(): ?string
+    public function getLinkToApiUser(): ?string
     {
-        return $this->linkToApi;
+        return $this->linkToApiUser;
     }
 
-    public function setLinkToApi(string $linkToApi): static
+    public function setLinkToApiUser(string $linkToApiUser): static
     {
-        $this->linkToApi = $linkToApi;
+        $this->linkToApiUser = $linkToApiUser;
 
         return $this;
     }
@@ -214,6 +220,30 @@ class CreatedApi
                 $purchasedApi->setLinkApi(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLinkToApiRequest(): ?string
+    {
+        return $this->linkToApiRequest;
+    }
+
+    public function setLinkToApiRequest(string $linkToApiRequest): static
+    {
+        $this->linkToApiRequest = $linkToApiRequest;
+
+        return $this;
+    }
+
+    public function getLinkToApiUserDelete(): ?string
+    {
+        return $this->linkToApiUserDelete;
+    }
+
+    public function setLinkToApiUserDelete(string $linkToApiUserDelete): static
+    {
+        $this->linkToApiUserDelete = $linkToApiUserDelete;
 
         return $this;
     }

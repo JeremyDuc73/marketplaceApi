@@ -71,6 +71,7 @@ class OrderController extends AbstractController
             $purchasedApi = new PurchasedApi();
             $purchasedApi->setLinkToProfile($this->getUser()->getProfile());
             $purchasedApi->setLinkApi($cartItem['createdApi']);
+            $purchasedApi->setRemainingRequests($cartItem['createdApi']->getRequestAmountPerSale());
             $manager->persist($purchasedApi);
         }
         $manager->flush();

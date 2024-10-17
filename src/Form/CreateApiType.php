@@ -19,7 +19,15 @@ class CreateApiType extends AbstractType
             ->add('requestAmountPerSale')
             ->add('apiKey')
             ->add('docLink')
-            ->add('linkToApi');
+            ->add('linkToApiUser', TextType::class, [
+                'label' => 'URL to your API user creation route',
+            ])
+            ->add('linkToApiUserDelete', TextType::class, [
+                'label' => 'URL to your API user deletion route'
+            ])
+            ->add('linkToApiRequest', TextType::class, [
+                'label' => 'URL to your API requests remaining route'
+            ]);
         if (!$options['editKey']) {
             $builder->add('apiKey', TextType::class, [
                 'label' => 'API Key',
