@@ -13,17 +13,51 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PurchasedApiController extends AbstractController
 {
-    public function __construct(private HttpClientInterface $client, private EncryptorService $encryptorService)
+    public function __construct(
+        private HttpClientInterface    $client,
+        private EncryptorService       $encryptorService,
+        private EntityManagerInterface $manager,
+        private MailService            $mailService
+    )
     {
     }
 
+    #[Route('/purchased/api/{id}/generate-new-api-key', name: 'app_purchased_api_generate_new_api_key')]
+    public function generateNewApiKey(PurchasedApi $purchasedApi)
+    {
+        $this->deleteApiKey($purchasedApi);
+        $this->generateApiKey($purchasedApi);
+    }
+
+    #[Route('/purchased/api/{id}/delete-api-key', name: 'app_purchased_api_delete_api_key')]
+    public function deleteApiKey(PurchasedApi $purchasedApi): Response
+    {
+        $route = $purchasedApi->getLinkApi()->getLinkToApiUserDelete();
+
+        $route = $route . "/" . $purchasedApi->getLinkToProfile()->getOfUser()->getUuid();
+
+        $this->client->request(
+            'DELETE',
+            $route, [
+                'headers' => [
+                    'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
+                ],
+            ]
+        );
+
+        $purchasedApi->setApiKeyGenerated(false);
+        $this->manager->flush();
+
+        return $this->redirectToRoute('app_profile');
+    }
+
     #[Route('/purchased/api/{id}/generate-api-key', name: 'app_purchased_api_generate_api_key')]
-    public function generateApiKey(PurchasedApi $purchasedApi, EntityManagerInterface $manager, MailService $service): Response
+    public function generateApiKey(PurchasedApi $purchasedApi): Response
     {
         $apiKey = bin2hex(random_bytes(16));
 
-        if ($this->getUser()->getEmail()){
-            $service->sendEmail(
+        if ($this->getUser()->getEmail()) {
+            $this->mailService->sendEmail(
                 $this->getUser()->getEmail(),
                 "Your Api Key DO NOT SHARE !",
                 $apiKey
@@ -54,29 +88,7 @@ class PurchasedApiController extends AbstractController
         // A TESTER
 
         $purchasedApi->setApiKeyGenerated(true);
-        $manager->flush();
-
-        return $this->redirectToRoute('app_profile');
-    }
-
-    #[Route('/purchased/api/{id}/delete-api-key', name: 'app_purchased_api_delete_api_key')]
-    public function deleteApiKey(PurchasedApi $purchasedApi, EntityManagerInterface $manager): Response
-    {
-        $route = $purchasedApi->getLinkApi()->getLinkToApiUserDelete();
-
-        $route = $route . "/" . $purchasedApi->getLinkToProfile()->getOfUser()->getUuid();
-
-        $this->client->request(
-            'DELETE',
-            $route, [
-                'headers' => [
-                    'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
-                ],
-            ]
-        );
-
-        $purchasedApi->setApiKeyGenerated(false);
-        $manager->flush();
+        $this->manager->flush();
 
         return $this->redirectToRoute('app_profile');
     }

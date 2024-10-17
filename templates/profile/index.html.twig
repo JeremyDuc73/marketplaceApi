@@ -19,7 +19,7 @@
                                 <a class="btn btn-success" href="{{ path('app_purchased_api_generate_api_key', {id:purchasedApi.id}) }}">GENERATE API KEY</a>
                             {% else %}
                                 <div>
-                                    <a class="btn btn-success" href="{{ path('app_purchased_api_generate_api_key', {id:purchasedApi.id}) }}">GENERATE A NEW API KEY</a>
+                                    <a class="btn btn-success" href="{{ path('app_purchased_api_generate_new_api_key', {id:purchasedApi.id}) }}">GENERATE A NEW API KEY</a>
                                     <a class="btn btn-danger" href="{{ path('app_purchased_api_delete_api_key', {id:purchasedApi.id}) }}">DELETE API KEY</a>
                                 </div>
                             {% endif %}
