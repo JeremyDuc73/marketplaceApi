@@ -29,9 +29,11 @@ class ProfileController extends AbstractController
         $purchasedApis = $user->getProfile()->getPurchasedApis();
 
         foreach ($purchasedApis as $api) {
-            $remainingRequests = $service->getRemainingRequests($api);
-            $api->setRemainingRequests($remainingRequests);
-            $manager->flush();
+            if ($api->isApiKeyGenerated()) {
+                $remainingRequests = $service->getRemainingRequests($api);
+                $api->setRemainingRequests($remainingRequests);
+                $manager->flush();
+            }
         }
 
         return $this->render('profile/index.html.twig', [

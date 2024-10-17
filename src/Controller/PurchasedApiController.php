@@ -27,6 +27,7 @@ class PurchasedApiController extends AbstractController
     {
         $this->deleteApiKey($purchasedApi);
         $this->generateApiKey($purchasedApi);
+        return $this->redirectToRoute("app_profile");
     }
 
     #[Route('/purchased/api/{id}/delete-api-key', name: 'app_purchased_api_delete_api_key')]
@@ -75,10 +76,11 @@ class PurchasedApiController extends AbstractController
                     'API-Key-Plat' => $this->encryptorService->decrypt($purchasedApi->getLinkApi()->getApiKey()),
                 ],
                 'body' => [
-                    'mail' => $this->getUser()->getEmail(),
-                    'apiKey' => $apiKey,
+                    'client_id'=>$this->getUser()->getId(),
+                    'email' => $this->getUser()->getEmail(),
+                    'api_key' => $apiKey,
                     'uuid' => $this->getUser()->getUuid(),
-                    'requests' => $purchasedApi->getRemainingRequests()
+                    'count' => $purchasedApi->getRemainingRequests()
                 ]
             ]
         );

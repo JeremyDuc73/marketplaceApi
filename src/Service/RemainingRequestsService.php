@@ -31,7 +31,7 @@ class RemainingRequestsService
             ]
         );
 
-        $content = $response->getContent();
+        $content = $response->toArray()["count"];
 
         return json_decode($content, true);
     }
