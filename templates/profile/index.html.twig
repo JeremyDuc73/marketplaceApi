@@ -40,7 +40,6 @@
                             <h5 class="card-title">{{ createdApi.name }}</h5>
                             <a href="{{ createdApi.docLink }}" class="card-link">documentation</a>
                             <p class="card-text">{{ createdApi.description }}</p>
-                            <p>{{ createdApi.apiKey }}</p>
                             <a href="{{ path('app_edit_api', {id:createdApi.id}) }}" class="btn btn-warning">EDIT</a>
                             <a href="#" class="btn btn-danger">DELETE</a>
                         </div>

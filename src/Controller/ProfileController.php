@@ -26,11 +26,6 @@ class ProfileController extends AbstractController
 
         $createdApis = $user->getProfile()->getCreatedApis();
 
-        foreach ($createdApis as $api) {
-            $decryptedApiKey = $this->encryptor->decrypt($api->getApiKey());
-            $api->setApiKey($decryptedApiKey);
-        }
-
         $purchasedApis = $user->getProfile()->getPurchasedApis();
 
         foreach ($purchasedApis as $api) {
