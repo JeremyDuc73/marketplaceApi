@@ -67,8 +67,6 @@ class PurchasedApiController extends AbstractController
 
         $apiKey = hash('sha256', $apiKey);
 
-        // A TESTER
-
         $clientUrl = $purchasedApi->getLinkApi()->getLinkToApiUser();
         $this->client->request(
             'POST',
@@ -84,8 +82,6 @@ class PurchasedApiController extends AbstractController
                 ]
             ]
         );
-
-        // A TESTER
 
         $purchasedApi->setApiKeyGenerated(true);
         $this->manager->flush();
