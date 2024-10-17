@@ -17,7 +17,6 @@ class CreateApiType extends AbstractType
             ->add('description')
             ->add('price')
             ->add('requestAmountPerSale')
-            ->add('apiKey')
             ->add('docLink')
             ->add('linkToApiUser', TextType::class, [
                 'label' => 'URL to your API user creation route',
