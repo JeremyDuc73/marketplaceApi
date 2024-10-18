@@ -1,12 +1,13 @@
+version: '3.8'
 
 services:
-###> doctrine/doctrine-bundle ###
+  ###> doctrine/doctrine-bundle ###
   database:
     ports:
       - "5433:5432"
-###< doctrine/doctrine-bundle ###
+  ###< doctrine/doctrine-bundle ###
 
-###> symfony/mailer ###
+  ###> symfony/mailer ###
   mailer:
     image: axllent/mailpit
     ports:
@@ -15,4 +16,11 @@ services:
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
-###< symfony/mailer ###
+  ###< symfony/mailer ###
+
+  ###> app ###
+  app:
+    environment:
+      SYMFONY_ENV: dev
+      DATABASE_URL: "postgresql://jeremy:jeremy@database:5432/marketplaceAPI?serverVersion=16&charset=utf8"
+  ###< app ###

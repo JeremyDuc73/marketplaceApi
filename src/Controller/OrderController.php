@@ -34,6 +34,9 @@ class OrderController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $base_url = $protocol . $_SERVER['HTTP_HOST'] . '/';
+
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
         $total = $cartService->getTotal() * 100;
@@ -57,8 +60,8 @@ class OrderController extends AbstractController
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => 'http://localhost:8000/make/order',
-            'cancel_url' => 'http://localhost:8000/cart',
+            'success_url' => $base_url . 'make/order',
+            'cancel_url' => $base_url . 'cart',
         ]);
         return $this->json(['url' => $session->url]);
     }
